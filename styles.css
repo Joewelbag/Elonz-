@@ -1,0 +1,268 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #000;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 400px;
+    height: 100vh;
+    max-height: 800px;
+    background: #1a1a1a;
+    border-radius: 30px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+/* Pingu Avatar Section */
+.pingu-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 40px;
+}
+
+.pingu-avatar {
+    width: 150px;
+    height: 150px;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.pingu-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.speaking-indicator {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    background: #4CAF50;
+    border-radius: 50%;
+    display: none;
+}
+
+.speaking-indicator.active {
+    display: block;
+    animation: pulse 1s infinite;
+}
+
+.chat-bubble {
+    background: #2a2a2a;
+    padding: 15px 25px;
+    border-radius: 30px;
+    max-width: 280px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border: 1px solid #3a3a3a;
+}
+
+.chat-bubble span {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #fff;
+}
+
+/* Voice Section (Center/Bottom) */
+.voice-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.mic-button {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #2a2a2a;
+    border: 2px solid #3a3a3a;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.mic-button:hover {
+    transform: scale(1.1);
+    border-color: #4CAF50;
+}
+
+.mic-button.listening {
+    background: #4CAF50;
+    border-color: #fff;
+}
+
+.listening-animation {
+    display: none;
+    gap: 5px;
+    height: 30px;
+    align-items: center;
+}
+
+.listening-animation.active {
+    display: flex;
+}
+
+.listening-animation span {
+    width: 8px;
+    height: 8px;
+    background: #4CAF50;
+    border-radius: 50%;
+    animation: bounce 1.4s infinite;
+}
+
+.listening-animation span:nth-child(2) { animation-delay: 0.2s; }
+.listening-animation span:nth-child(3) { animation-delay: 0.4s; }
+.listening-animation span:nth-child(4) { animation-delay: 0.6s; }
+
+.voice-hint {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Text Input Interface */
+.text-input-interface {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #1a1a1a;
+    padding: 20px;
+    border-top: 1px solid #3a3a3a;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    z-index: 10;
+}
+
+.text-input-interface.active {
+    transform: translateY(0);
+}
+
+.text-input-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#textInput {
+    flex: 1;
+    padding: 15px;
+    border-radius: 25px;
+    border: 2px solid #3a3a3a;
+    background: #2a2a2a;
+    color: white;
+    font-size: 16px;
+}
+
+#textInput:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+#sendButton {
+    padding: 15px 25px;
+    border-radius: 25px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.close-text {
+    position: absolute;
+    top: -30px;
+    right: 20px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    color: white;
+    cursor: pointer;
+}
+
+/* Text Input Opener Button */
+.open-text-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #2a2a2a;
+    border: 2px solid #3a3a3a;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.open-text-btn:hover {
+    transform: scale(1.1);
+    border-color: #4CAF50;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-10px); }
+}
+
+/* Voice Command Popup */
+.voice-command-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #2a2a2a;
+    padding: 20px;
+    border-radius: 20px;
+    border: 2px solid #4CAF50;
+    z-index: 100;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .container {
+        border-radius: 0;
+        max-height: 100vh;
+    }
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pingu · your companion</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a1a">
+</head>
+<body>
+    <div class="container">
+        <!-- Main Pingu Avatar -->
+        <div class="pingu-container">
+            <div class="pingu-avatar" id="pinguAvatar">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23333'/%3E%3Ccircle cx='35' cy='40' r='5' fill='white'/%3E%3Ccircle cx='65' cy='40' r='5' fill='white'/%3E%3Ccircle cx='38' cy='42' r='2' fill='black'/%3E%3Ccircle cx='62' cy='42' r='2' fill='black'/%3E%3Cpath d='M35 65 Q50 75 65 65' stroke='white' stroke-width='3' fill='none'/%3E%3C/svg%3E" alt="Pingu">
+                <div class="speaking-indicator" id="speakingIndicator"></div>
+            </div>
+            <div class="chat-bubble" id="chatBubble">
+                <span id="botMessage">Hello my name is Pingu at your service</span>
+            </div>
+        </div>
+
+        <!-- Voice Input Section (Center/Bottom) -->
+        <div class="voice-section">
+            <button class="mic-button" id="micButton">
+                <svg viewBox="0 0 24 24" width="32" height="32">
+                    <path fill="currentColor" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                    <path fill="currentColor" d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                </svg>
+            </button>
+            <div class="listening-animation" id="listeningAnimation">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <p class="voice-hint" id="voiceHint">tap to speak</p>
+        </div>
+
+        <!-- Text Input Interface (Hidden by default) -->
+        <div class="text-input-interface" id="textInterface">
+            <div class="text-input-container">
+                <input type="text" id="textInput" placeholder="type your message...">
+                <button id="sendButton">send</button>
+            </div>
+            <button class="close-text" id="closeText">✕</button>
+        </div>
+
+        <!-- Mini Text Input Opener -->
+        <button class="open-text-btn" id="openTextBtn">⌨️</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "Pingu - Your Companion",
+  "short_name": "Pingu",
+  "description": "Your personal memory companion",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#1a1a1a",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

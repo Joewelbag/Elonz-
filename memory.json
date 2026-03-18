@@ -1,0 +1,72 @@
+{
+  "bot_profile": {
+    "name": "Pingu",
+    "greeting": "Hello my name is Pingu at your service",
+    "welcome_message": "I remember everything about you two. Ask me anything - about your chats, memories, inside jokes, or just talk to me. I can also type if you prefer!"
+  },
+  "timeline": [
+    {
+      "date": "2023-05-15",
+      "event": "first_met",
+      "location": "Central Park Coffee Shop",
+      "story": "It was raining and you were reading a book. He spilled his coffee, you laughed, and the rest is history.",
+      "keywords": ["meet", "first", "met", "started"]
+    },
+    {
+      "date": "2023-06-01", 
+      "event": "first_date",
+      "location": "That Italian place",
+      "story": "You both ordered pasta and talked for 4 hours. The waiter had to kick you out.",
+      "keywords": ["first date", "date"]
+    }
+  ],
+  "whatsapp_chats": [
+    {
+      "date": "2024-01-15",
+      "time": "22:34",
+      "from": "you",
+      "message": "I love you more than coffee",
+      "context": "late night chat",
+      "keywords": ["love", "coffee"]
+    },
+    {
+      "date": "2024-01-16", 
+      "time": "08:12",
+      "from": "her",
+      "message": "Dreamt about our trip to Paris",
+      "context": "morning message",
+      "keywords": ["dream", "paris", "trip"]
+    }
+  ],
+  "inside_jokes": [
+    {
+      "name": "pineapple incident",
+      "story": "That time you ordered pineapple pizza even though you're 'allergic'",
+      "trigger_words": ["pineapple", "pizza", "incident"]
+    }
+  ],
+  "stories": [
+    {
+      "title": "How We Fell in Love",
+      "content": "It started with a spilled coffee and ended with forever...",
+      "category": "romance"
+    }
+  ],
+  "favorites": {
+    "her": {
+      "food": ["sushi", "ramen"],
+      "movie": "Amélie",
+      "color": "green"
+    },
+    "him": {
+      "food": ["burgers", "pizza"],
+      "movie": "Inception",
+      "color": "blue"
+    }
+  },
+  "fallback_responses": [
+    "Tell me more about that, love ❤️",
+    "I don't know that yet - want to tell me?",
+    "Ask me about your chats, memories, or just say hi!"
+  ]
+}
