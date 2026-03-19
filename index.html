@@ -1,63 +1,899 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pingu · your companion</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1a1a1a">
+    <title>PINGU · beyond reality</title>
+    <style>
+        /* ===== RESET & GLOBAL ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ===== CINEMATIC OPENING OVERLAY ===== */
+        .cinematic-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: cinematicFade 3.5s ease-in-out forwards;
+            pointer-events: none;
+        }
+
+        .cinematic-content {
+            text-align: center;
+            opacity: 0;
+            animation: cinematicText 2.5s ease-in-out forwards;
+        }
+
+        .cinematic-logo {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #fff, #888, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 10px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.3));
+        }
+
+        .cinematic-sub {
+            font-size: 1.2rem;
+            color: #888;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 255, 255, 0.03) 50%
+            );
+            background-size: 100% 4px;
+            animation: scan 8s linear infinite;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            max-height: 850px;
+            background: #111111;
+            border-radius: 40px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px 20px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8),
+                        0 0 0 2px rgba(0, 255, 255, 0.1) inset,
+                        0 0 30px rgba(0, 255, 255, 0.2);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            transform: scale(0.95);
+            opacity: 0;
+            animation: containerAppear 0.8s ease-out 2.8s forwards;
+        }
+
+        /* ===== PINGU AVATAR SECTION - EXACT MATCH ===== */
+        .pingu-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-top: 30px;
+            position: relative;
+        }
+
+        .pingu-avatar {
+            width: 160px;
+            height: 160px;
+            position: relative;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.3));
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .pingu-avatar svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.5));
+        }
+
+        .glow-ring {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: pulseRing 2s ease-out infinite;
+        }
+
+        .speaking-indicator {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background: #00ffff;
+            border-radius: 50%;
+            display: none;
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        .speaking-indicator.active {
+            display: block;
+            animation: pulse 0.8s ease-in-out infinite;
+        }
+
+        /* ===== CHAT BUBBLE - EXACT MATCH ===== */
+        .chat-bubble {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: 30px;
+            max-width: 300px;
+            min-height: 80px;
+            text-align: center;
+            position: relative;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5),
+                        0 0 30px rgba(0, 255, 255, 0.2);
+            margin-top: 10px;
+        }
+
+        .chat-bubble::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: rgba(20, 20, 20, 0.95);
+            border-left: 1px solid rgba(0, 255, 255, 0.3);
+            border-top: 1px solid rgba(0, 255, 255, 0.3);
+            rotate: 45deg;
+        }
+
+        .chat-bubble span {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            display: block;
+            min-height: 50px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 20px;
+            background: #00ffff;
+            margin-left: 5px;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        /* ===== VOICE SECTION - EXACT MATCH ===== */
+        .voice-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            width: 100%;
+        }
+
+        .mic-button {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            color: #00ffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mic-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,255,255,0.2) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mic-button:hover::before {
+            opacity: 1;
+        }
+
+        .mic-button:hover {
+            transform: scale(1.1);
+            border-color: #00ffff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+
+        .mic-button.listening {
+            background: #00ffff;
+            color: #000;
+            border-color: #fff;
+            box-shadow: 0 0 40px #00ffff;
+            animation: pulseGlow 1.5s ease-in-out infinite;
+        }
+
+        .mic-button svg {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 0 5px currentColor);
+        }
+
+        /* ===== LISTENING ANIMATION - EXACT MATCH FROM IMAGE ===== */
+        .listening-animation {
+            display: none;
+            gap: 8px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .listening-animation.active {
+            display: flex;
+        }
+
+        .listening-animation span {
+            width: 10px;
+            height: 10px;
+            background: #00ffff;
+            border-radius: 50%;
+            animation: wave 1.4s infinite ease-in-out;
+            box-shadow: 0 0 15px #00ffff;
+        }
+
+        .listening-animation span:nth-child(1) { animation-delay: 0s; }
+        .listening-animation span:nth-child(2) { animation-delay: 0.2s; }
+        .listening-animation span:nth-child(3) { animation-delay: 0.4s; }
+        .listening-animation span:nth-child(4) { animation-delay: 0.6s; }
+
+        .voice-hint {
+            color: #666;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .voice-hint::before,
+        .voice-hint::after {
+            content: '✦';
+            margin: 0 10px;
+            color: #00ffff;
+            opacity: 0.5;
+        }
+
+        /* ===== TEXT INPUT INTERFACE ===== */
+        .text-input-interface {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-top: 2px solid rgba(0, 255, 255, 0.3);
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 20;
+            border-radius: 30px 30px 0 0;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+
+        .text-input-interface.active {
+            transform: translateY(0);
+        }
+
+        .text-input-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        #textInput {
+            flex: 1;
+            padding: 18px 22px;
+            border-radius: 40px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            background: #222;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        #textInput:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        #sendButton {
+            padding: 18px 30px;
+            border-radius: 40px;
+            border: none;
+            background: #00ffff;
+            color: #000;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        #sendButton:hover {
+            background: #fff;
+            box-shadow: 0 0 30px #00ffff;
+        }
+
+        .close-text {
+            position: absolute;
+            top: -40px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #222;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            color: #00ffff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-text:hover {
+            border-color: #00ffff;
+            transform: rotate(90deg);
+        }
+
+        /* ===== TEXT INPUT OPENER ===== */
+        .open-text-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            color: #00ffff;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 15;
+        }
+
+        .open-text-btn:hover {
+            transform: scale(1.15) rotate(360deg);
+            border-color: #00ffff;
+            box-shadow: 0 0 30px #00ffff;
+        }
+
+        /* ===== STATUS BAR ===== */
+        .status-bar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00ffff;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes cinematicFade {
+            0% { opacity: 1; backdrop-filter: blur(0); }
+            70% { opacity: 1; backdrop-filter: blur(0); }
+            100% { opacity: 0; backdrop-filter: blur(10px); display: none; }
+        }
+
+        @keyframes cinematicText {
+            0% { opacity: 0; transform: scale(0.9); }
+            30% { opacity: 1; transform: scale(1); }
+            70% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.2); }
+        }
+
+        @keyframes containerAppear {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 40px #00ffff; }
+            50% { box-shadow: 0 0 70px #00ffff; }
+        }
+
+        @keyframes pulseRing {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        @keyframes wave {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-15px); }
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        @keyframes scan {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+
+        /* ===== FUTURISTIC ELEMENTS ===== */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.3;
+        }
+
+        .corner-decoration {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(0, 255, 255, 0.2);
+            z-index: 1;
+        }
+
+        .corner-tl {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-br {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+        }
+    </style>
 </head>
 <body>
-    <script>
-// Cinematic opening effect
-window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
-    setTimeout(() => {
-        document.body.style.transition = 'opacity 1.5s ease';
-        document.body.style.opacity = '1';
-    }, 100);
-});
-</script>
+    <!-- Cinematic Opening -->
+    <div class="cinematic-overlay">
+        <div class="cinematic-content">
+            <div class="cinematic-logo">PINGU</div>
+            <div class="cinematic-sub">beyond consciousness</div>
+        </div>
+    </div>
+
+    <!-- Futuristic Grid -->
+    <div class="grid-overlay"></div>
+    
+    <!-- Scan Line Effect -->
+    <div class="scan-line"></div>
+
+    <!-- Main Container -->
     <div class="container">
-        <!-- Main Pingu Avatar -->
-        <div class="pingu-container">
-            <div class="pingu-avatar" id="pinguAvatar">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23333'/%3E%3Ccircle cx='35' cy='40' r='5' fill='white'/%3E%3Ccircle cx='65' cy='40' r='5' fill='white'/%3E%3Ccircle cx='38' cy='42' r='2' fill='black'/%3E%3Ccircle cx='62' cy='42' r='2' fill='black'/%3E%3Cpath d='M35 65 Q50 75 65 65' stroke='white' stroke-width='3' fill='none'/%3E%3C/svg%3E" alt="Pingu">
-                <div class="speaking-indicator" id="speakingIndicator"></div>
+        <!-- Corner Decorations -->
+        <div class="corner-decoration corner-tl"></div>
+        <div class="corner-decoration corner-br"></div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-dot"></span>
+                <span>ONLINE</span>
             </div>
-            <div class="chat-bubble" id="chatBubble">
-                <span id="botMessage">Hello my name is Pingu at your service</span>
+            <div class="status-item">
+                <span>✦ v1.0</span>
+            </div>
+            <div class="status-item">
+                <span>⚡ 100%</span>
             </div>
         </div>
 
-        <!-- Voice Input Section (Center/Bottom) -->
+        <!-- Pingu Avatar - EXACT MATCH TO IMAGE -->
+        <div class="pingu-container">
+            <div class="pingu-avatar" id="pinguAvatar">
+                <div class="glow-ring"></div>
+                <svg viewBox="0 0 100 100">
+                    <!-- Pingu Face - Exactly like image -->
+                    <circle cx="50" cy="50" r="45" fill="#1a1a1a" stroke="#00ffff" stroke-width="1.5"/>
+                    <!-- Eyes -->
+                    <circle cx="35" cy="40" r="6" fill="white"/>
+                    <circle cx="65" cy="40" r="6" fill="white"/>
+                    <circle cx="37" cy="42" r="2.5" fill="black"/>
+                    <circle cx="63" cy="42" r="2.5" fill="black"/>
+                    <!-- Cute blush -->
+                    <circle cx="30" cy="55" r="4" fill="#ff6b9d" opacity="0.3"/>
+                    <circle cx="70" cy="55" r="4" fill="#ff6b9d" opacity="0.3"/>
+                    <!-- Mouth (slight smile) -->
+                    <path d="M35 65 Q50 75 65 65" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div class="speaking-indicator" id="speakingIndicator"></div>
+            </div>
+            
+            <!-- Chat Bubble - EXACT MATCH -->
+            <div class="chat-bubble" id="chatBubble">
+                <span id="botMessage"></span>
+                <span class="cursor"></span>
+            </div>
+        </div>
+
+        <!-- Voice Section - EXACT MATCH TO IMAGE -->
         <div class="voice-section">
             <button class="mic-button" id="micButton">
-                <svg viewBox="0 0 24 24" width="32" height="32">
+                <svg viewBox="0 0 24 24">
                     <path fill="currentColor" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
                     <path fill="currentColor" d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
                 </svg>
             </button>
+            
+            <!-- Listening Animation - EXACT MATCH -->
             <div class="listening-animation" id="listeningAnimation">
-                <span></span><span></span><span></span><span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
-            <p class="voice-hint" id="voiceHint">tap to speak</p>
+            
+            <p class="voice-hint" id="voiceHint">Listening...</p>
         </div>
 
-        <!-- Text Input Interface (Hidden by default) -->
+        <!-- Text Input Interface -->
         <div class="text-input-interface" id="textInterface">
             <div class="text-input-container">
-                <input type="text" id="textInput" placeholder="type your message...">
+                <input type="text" id="textInput" placeholder="type your message..." autocomplete="off">
                 <button id="sendButton">send</button>
             </div>
             <button class="close-text" id="closeText">✕</button>
         </div>
 
-        <!-- Mini Text Input Opener -->
+        <!-- Text Input Opener -->
         <button class="open-text-btn" id="openTextBtn">⌨️</button>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // PINGU - COMPLETE VOICE + TEXT BOT
+        class Pingu {
+            constructor() {
+                this.isListening = false;
+                this.isSpeaking = false;
+                this.textMode = false;
+                this.recognition = null;
+                this.synthesis = window.speechSynthesis;
+                this.memory = this.loadMemory();
+                
+                this.init();
+            }
+
+            init() {
+                this.setupVoiceRecognition();
+                this.setupEventListeners();
+                this.cinematicIntroduction();
+            }
+
+            loadMemory() {
+                // Pingu's memory - Your relationship data
+                return {
+                    name: "Pingu",
+                    greetings: [
+                        "Hello my name is Pingu at your service",
+                        "Hey there, Pingu here, ready to assist",
+                        "Pingu online. How can I help?"
+                    ],
+                    responses: {
+                        meet: "You first met on May 15th, 2023 at Central Park Coffee Shop. It was raining and he spilled his coffee - but that's when your story began.",
+                        first_date: "Your first date was at that cozy Italian place on June 1st. You talked for 4 hours until they closed!",
+                        favorite_food: "Her favorite food is sushi and ramen. His? Burgers and pizza - classic!",
+                        favorite_movie: "Her favorite movie is Amélie. His is Inception.",
+                        love: "I know for a fact that you two are deeply in love. Every message, every memory proves it.",
+                        inside_joke: "The pineapple incident? Oh yes, I remember! That was hilarious - the fake allergy reveal!",
+                        default: [
+                            "Tell me more about that...",
+                            "I'm here, what's on your mind?",
+                            "Ask me about your memories together",
+                            "I remember everything about you two"
+                        ]
+                    },
+                    whatsapp_memories: [
+                        { date: "2024-01-15", from: "him", message: "I love you more than coffee", context: "late night" },
+                        { date: "2024-01-16", from: "her", message: "Dreamt about our future together", context: "morning sweet" }
+                    ]
+                };
+            }
+
+            cinematicIntroduction() {
+                // Sequence: Welcome message with typing effect
+                setTimeout(() => {
+                    this.typeMessage(this.memory.greetings[0], () => {
+                        // Speak the greeting
+                        this.speak(this.memory.greetings[0], () => {
+                            // After speaking, show how-to message
+                            setTimeout(() => {
+                                const howTo = "You can ask me about your memories, or just tap the mic and speak. I'm listening...";
+                                this.typeMessage(howTo, () => {
+                                    this.speak(howTo);
+                                });
+                            }, 800);
+                        });
+                    });
+                }, 3200); // After cinematic
+            }
+
+            typeMessage(text, callback) {
+                const messageEl = document.getElementById('botMessage');
+                let i = 0;
+                messageEl.textContent = '';
+                
+                const typing = setInterval(() => {
+                    if (i < text.length) {
+                        messageEl.textContent += text.charAt(i);
+                        i++;
+                    } else {
+                        clearInterval(typing);
+                        if (callback) callback();
+                    }
+                }, 30);
+            }
+
+            setupVoiceRecognition() {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    this.recognition = new SpeechRecognition();
+                    this.recognition.continuous = false;
+                    this.recognition.interimResults = false;
+                    this.recognition.lang = 'en-US';
+                    
+                    this.recognition.onstart = () => {
+                        this.isListening = true;
+                        document.getElementById('micButton').classList.add('listening');
+                        document.getElementById('listeningAnimation').classList.add('active');
+                        document.getElementById('voiceHint').textContent = 'I\'m listening...';
+                    };
+                    
+                    this.recognition.onresult = (event) => {
+                        const command = event.results[0][0].transcript;
+                        this.processCommand(command);
+                    };
+                    
+                    this.recognition.onend = () => {
+                        this.isListening = false;
+                        document.getElementById('micButton').classList.remove('listening');
+                        document.getElementById('listeningAnimation').classList.remove('active');
+                        document.getElementById('voiceHint').textContent = 'Listening...';
+                    };
+                } else {
+                    document.getElementById('voiceHint').textContent = 'Voice not supported';
+                }
+            }
+
+            setupEventListeners() {
+                // Mic button
+                document.getElementById('micButton').addEventListener('click', () => {
+                    if (this.recognition && !this.isListening) {
+                        this.recognition.start();
+                    }
+                });
+                
+                // Open text interface
+                document.getElementById('openTextBtn').addEventListener('click', () => {
+                    this.toggleTextInterface();
+                });
+                
+                // Close text interface
+                document.getElementById('closeText').addEventListener('click', () => {
+                    this.toggleTextInterface(false);
+                });
+                
+                // Send text message
+                document.getElementById('sendButton').addEventListener('click', () => {
+                    this.sendTextMessage();
+                });
+                
+                // Enter key
+                document.getElementById('textInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendTextMessage();
+                });
+            }
+
+            processCommand(command) {
+                // Show what she said
+                this.typeMessage(`"${command}"`, () => {
+                    setTimeout(() => {
+                        const response = this.generateResponse(command);
+                        this.typeMessage(response, () => {
+                            this.speak(response);
+                        });
+                    }, 500);
+                });
+            }
+
+            generateResponse(question) {
+                const q = question.toLowerCase();
+                
+                // Check for different topics
+                if (q.includes('meet') || q.includes('first met')) {
+                    return this.memory.responses.meet;
+                }
+                if (q.includes('first date')) {
+                    return this.memory.responses.first_date;
+                }
+                if (q.includes('favorite food')) {
+                    return this.memory.responses.favorite_food;
+                }
+                if (q.includes('favorite movie')) {
+                    return this.memory.responses.favorite_movie;
+                }
+                if (q.includes('love')) {
+                    return this.memory.responses.love;
+                }
+                if (q.includes('joke') || q.includes('pineapple')) {
+                    return this.memory.responses.inside_joke;
+                }
+                if (q.includes('open text') || q.includes('type mode')) {
+                    this.toggleTextInterface(true);
+                    return "Opening text interface for you";
+                }
+                
+                // Default response
+                const defaults = this.memory.responses.default;
+                return defaults[Math.floor(Math.random() * defaults.length)];
+            }
+
+            speak(text, callback) {
+                if (!this.synthesis) return;
+                
+                this.synthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                utterance.voice = this.synthesis.getVoices().find(v => v.lang.includes('en'));
+                
+                document.getElementById('speakingIndicator').classList.add('active');
+                this.isSpeaking = true;
+                
+                utterance.onend = () => {
+                    document.getElementById('speakingIndicator').classList.remove('active');
+                    this.isSpeaking = false;
+                    if (callback) callback();
+                };
+                
+                this.synthesis.speak(utterance);
+            }
+
+            toggleTextInterface(force) {
+                const textInterface = document.getElementById('textInterface');
+                if (force === true) {
+                    textInterface.classList.add('active');
+                    this.textMode = true;
+                    document.getElementById('textInput').focus();
+                } else if (force === false) {
+                    textInterface.classList.remove('active');
+                    this.textMode = false;
+                } else {
+                    textInterface.classList.toggle('active');
+                    this.textMode = !this.textMode;
+                    if (this.textMode) {
+                        document.getElementById('textInput').focus();
+                    }
+                }
+            }
+
+            sendTextMessage() {
+                const input = document.getElementById('textInput');
+                const message = input.value.trim();
+                
+                if (message) {
+                    // Show her message
+                    this.typeMessage(`"${message}"`, () => {
+                        setTimeout(() => {
+                            const response = this.generateResponse(message);
+                            this.typeMessage(response, () => {
+                                this.speak(response);
+                            });
+                        }, 500);
+                    });
+                    
+                    input.value = '';
+                    this.toggleTextInterface(false);
+                }
+            }
+        }
+
+        // Initialize Pingu when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.pingu = new Pingu();
+        });
+    </script>
 </body>
 </html>
