@@ -9,6 +9,16 @@
     <meta name="theme-color" content="#1a1a1a">
 </head>
 <body>
+    <script>
+// Cinematic opening effect
+window.addEventListener('load', () => {
+    document.body.style.opacity = '0';
+    setTimeout(() => {
+        document.body.style.transition = 'opacity 1.5s ease';
+        document.body.style.opacity = '1';
+    }, 100);
+});
+</script>
     <div class="container">
         <!-- Main Pingu Avatar -->
         <div class="pingu-container">
