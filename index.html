@@ -1,656 +1,651 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PINGU · beyond reality</title>
+    <title>Pingu · Voice Interface</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f0f0f">
     <style>
-        /* ===== RESET & GLOBAL ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --accent-green: #00ff9d;
+            --accent-green-dim: rgba(0, 255, 157, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --border-color: #2a2a2a;
+        }
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            position: relative;
         }
 
-        /* ===== CINEMATIC OPENING OVERLAY ===== */
-        .cinematic-overlay {
+        /* Simple Background */
+        .background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: cinematicFade 3.5s ease-in-out forwards;
-            pointer-events: none;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            z-index: 0;
         }
 
-        .cinematic-content {
-            text-align: center;
-            opacity: 0;
-            animation: cinematicText 2.5s ease-in-out forwards;
-        }
-
-        .cinematic-logo {
-            font-size: 5rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, #fff, #888, #fff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 10px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 20px rgba(255,255,255,0.3));
-        }
-
-        .cinematic-sub {
-            font-size: 1.2rem;
-            color: #888;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-        }
-
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                transparent 50%,
-                rgba(0, 255, 255, 0.03) 50%
-            );
-            background-size: 100% 4px;
-            animation: scan 8s linear infinite;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        /* ===== MAIN CONTAINER ===== */
         .container {
             width: 100%;
             max-width: 400px;
             height: 100vh;
-            max-height: 850px;
-            background: #111111;
-            border-radius: 40px;
+            max-height: 800px;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 30px;
             position: relative;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 40px 20px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8),
-                        0 0 0 2px rgba(0, 255, 255, 0.1) inset,
-                        0 0 30px rgba(0, 255, 255, 0.2);
-            border: 1px solid rgba(0, 255, 255, 0.2);
-            transform: scale(0.95);
-            opacity: 0;
-            animation: containerAppear 0.8s ease-out 2.8s forwards;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            z-index: 1;
+            overflow: hidden;
         }
 
-        /* ===== PINGU AVATAR SECTION - EXACT MATCH ===== */
-        .pingu-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
+        /* Pingu Profile */
+        .pingu-profile {
+            text-align: center;
             margin-top: 30px;
-            position: relative;
-        }
-
-        .pingu-avatar {
-            width: 160px;
-            height: 160px;
-            position: relative;
             margin-bottom: 20px;
-            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.3));
-            animation: float 4s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
         }
 
-        .pingu-avatar svg {
+        .avatar-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+        }
+
+        .avatar-circle {
             width: 100%;
             height: 100%;
-            filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.5));
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
         }
 
-        .glow-ring {
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            border: 2px solid rgba(0, 255, 255, 0.3);
-            border-radius: 50%;
-            animation: pulseRing 2s ease-out infinite;
+        .avatar-circle .emoji {
+            font-size: 48px;
+            filter: drop-shadow(0 0 10px var(--accent-green));
         }
 
         .speaking-indicator {
             position: absolute;
             bottom: 5px;
             right: 5px;
-            width: 20px;
-            height: 20px;
-            background: #00ffff;
+            width: 14px;
+            height: 14px;
+            background: var(--accent-green);
             border-radius: 50%;
             display: none;
-            box-shadow: 0 0 20px #00ffff;
+            border: 2px solid var(--bg-primary);
         }
 
         .speaking-indicator.active {
             display: block;
-            animation: pulse 0.8s ease-in-out infinite;
+            animation: pulse 1s infinite;
         }
 
-        /* ===== CHAT BUBBLE - EXACT MATCH ===== */
-        .chat-bubble {
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 20px 30px;
-            border-radius: 30px;
-            max-width: 300px;
-            min-height: 80px;
-            text-align: center;
-            position: relative;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5),
-                        0 0 30px rgba(0, 255, 255, 0.2);
-            margin-top: 10px;
+        .pingu-profile h2 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+            font-weight: 500;
+            letter-spacing: 1px;
         }
 
-        .chat-bubble::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 20px;
-            background: rgba(20, 20, 20, 0.95);
-            border-left: 1px solid rgba(0, 255, 255, 0.3);
-            border-top: 1px solid rgba(0, 255, 255, 0.3);
-            rotate: 45deg;
+        .tagline {
+            color: var(--accent-green);
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.8;
         }
 
-        .chat-bubble span {
-            font-size: 16px;
-            line-height: 1.6;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-            display: block;
-            min-height: 50px;
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 3px;
-            height: 20px;
-            background: #00ffff;
-            margin-left: 5px;
-            animation: blink 1s infinite;
-            vertical-align: middle;
-        }
-
-        /* ===== VOICE SECTION - EXACT MATCH ===== */
-        .voice-section {
+        /* Voice Interface */
+        .voice-interface {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 40px;
-            width: 100%;
+            justify-content: center;
+            gap: 30px;
+            z-index: 2;
+        }
+
+        /* Modern Recording Button */
+        .mic-container {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .mic-button {
-            width: 90px;
-            height: 90px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            background: #1a1a1a;
-            border: 2px solid rgba(0, 255, 255, 0.3);
-            color: #00ffff;
+            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            border: 3px solid var(--accent-green);
+            color: var(--accent-green);
+            font-size: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
             position: relative;
-            overflow: hidden;
         }
 
         .mic-button::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(0,255,255,0.2) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            transition: all 0.3s;
         }
 
-        .mic-button:hover::before {
-            opacity: 1;
-        }
-
-        .mic-button:hover {
-            transform: scale(1.1);
-            border-color: #00ffff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-        }
-
+        /* Listening State */
         .mic-button.listening {
-            background: #00ffff;
-            color: #000;
-            border-color: #fff;
-            box-shadow: 0 0 40px #00ffff;
-            animation: pulseGlow 1.5s ease-in-out infinite;
+            background: linear-gradient(145deg, #1f1f1f, #151515);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.3);
+            animation: gentlePulse 1.5s infinite;
         }
 
-        .mic-button svg {
-            width: 40px;
-            height: 40px;
-            filter: drop-shadow(0 0 5px currentColor);
+        /* Full Duplex State */
+        .mic-button.full-duplex {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 40px rgba(0, 255, 157, 0.5);
+            animation: duplexPulse 2s infinite;
         }
 
-        /* ===== LISTENING ANIMATION - EXACT MATCH FROM IMAGE ===== */
-        .listening-animation {
-            display: none;
-            gap: 8px;
+        .mic-button.full-duplex::after {
+            content: '∞';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 18px;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        /* Recording Level Indicator */
+        .recording-level {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-green);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s;
+        }
+
+        .mic-button.listening .recording-level {
+            opacity: 0.3;
+            transform: scale(1);
+            animation: expandRing 2s infinite;
+        }
+
+        .mic-button.full-duplex .recording-level {
+            opacity: 0.5;
+            transform: scale(1.1);
+            animation: expandRing 1.5s infinite;
+        }
+
+        /* Level Bars (like recording meters) */
+        .level-bars {
+            display: flex;
+            gap: 4px;
             height: 40px;
             align-items: center;
             justify-content: center;
+            margin-top: 10px;
         }
 
-        .listening-animation.active {
-            display: flex;
-        }
-
-        .listening-animation span {
-            width: 10px;
-            height: 10px;
-            background: #00ffff;
-            border-radius: 50%;
-            animation: wave 1.4s infinite ease-in-out;
-            box-shadow: 0 0 15px #00ffff;
-        }
-
-        .listening-animation span:nth-child(1) { animation-delay: 0s; }
-        .listening-animation span:nth-child(2) { animation-delay: 0.2s; }
-        .listening-animation span:nth-child(3) { animation-delay: 0.4s; }
-        .listening-animation span:nth-child(4) { animation-delay: 0.6s; }
-
-        .voice-hint {
-            color: #666;
-            font-size: 14px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            position: relative;
-        }
-
-        .voice-hint::before,
-        .voice-hint::after {
-            content: '✦';
-            margin: 0 10px;
-            color: #00ffff;
+        .level-bar {
+            width: 4px;
+            height: 15px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            transition: height 0.1s ease;
             opacity: 0.5;
         }
 
-        /* ===== TEXT INPUT INTERFACE ===== */
-        .text-input-interface {
+        .mic-button.listening ~ .level-bars .level-bar {
+            animation: levelMeter 0.8s infinite alternate;
+        }
+
+        .mic-button.full-duplex ~ .level-bars .level-bar {
+            animation: levelMeter 0.4s infinite alternate;
+        }
+
+        .level-bar:nth-child(1) { animation-delay: 0s; }
+        .level-bar:nth-child(2) { animation-delay: 0.1s; }
+        .level-bar:nth-child(3) { animation-delay: 0.2s; }
+        .level-bar:nth-child(4) { animation-delay: 0.3s; }
+        .level-bar:nth-child(5) { animation-delay: 0.4s; }
+
+        /* Duplex Indicator */
+        .duplex-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-green-dim);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--accent-green);
+            margin-top: 15px;
+        }
+
+        .duplex-indicator.active {
+            display: flex;
+        }
+
+        .duplex-indicator span {
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .duplex-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        .status-text {
+            color: var(--text-secondary);
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+        }
+
+        /* Chat History */
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 2;
+            scroll-behavior: smooth;
+            margin-top: 10px;
+        }
+
+        .chat-history.visible {
+            display: flex;
+        }
+
+        .message {
+            display: flex;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 8px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .message.bot .message-avatar {
+            border-color: var(--accent-green);
+        }
+
+        .message-content {
+            background: var(--bg-secondary);
+            padding: 10px 14px;
+            border-radius: 18px;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.4;
+            max-width: calc(100% - 48px);
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: var(--accent-green-dim);
+            border-color: var(--accent-green);
+            color: var(--text-primary);
+        }
+
+        /* Keyboard Toggle - Always Floating */
+        .keyboard-toggle {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            color: var(--accent-green);
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .keyboard-toggle:hover {
+            border-color: var(--accent-green);
+            transform: scale(1.05);
+        }
+
+        .keyboard-toggle.active {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-color: var(--accent-green);
+        }
+
+        /* Text Input Area */
+        .text-input-area {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(17, 17, 17, 0.98);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-top: 2px solid rgba(0, 255, 255, 0.3);
+            background: var(--bg-primary);
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
             transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 20;
-            border-radius: 30px 30px 0 0;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-        }
-
-        .text-input-interface.active {
-            transform: translateY(0);
-        }
-
-        .text-input-container {
+            transition: transform 0.3s ease;
+            z-index: 9;
             display: flex;
-            gap: 12px;
-            align-items: center;
+            gap: 10px;
+        }
+
+        .text-input-area.active {
+            transform: translateY(0);
         }
 
         #textInput {
             flex: 1;
-            padding: 18px 22px;
-            border-radius: 40px;
-            border: 2px solid rgba(0, 255, 255, 0.3);
-            background: #222;
+            padding: 14px 18px;
+            border-radius: 30px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-secondary);
             color: white;
-            font-size: 16px;
-            transition: all 0.3s;
+            font-size: 15px;
         }
 
         #textInput:focus {
             outline: none;
-            border-color: #00ffff;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            border-color: var(--accent-green);
         }
 
-        #sendButton {
-            padding: 18px 30px;
-            border-radius: 40px;
+        #sendBtn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             border: none;
-            background: #00ffff;
-            color: #000;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        #sendButton:hover {
-            background: #fff;
-            box-shadow: 0 0 30px #00ffff;
-        }
-
-        .close-text {
-            position: absolute;
-            top: -40px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #222;
-            border: 2px solid rgba(0, 255, 255, 0.3);
-            color: #00ffff;
+            background: var(--accent-green);
+            color: var(--bg-primary);
             font-size: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .close-text:hover {
-            border-color: #00ffff;
-            transform: rotate(90deg);
-        }
-
-        /* ===== TEXT INPUT OPENER ===== */
-        .open-text-btn {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            background: #1a1a1a;
-            border: 2px solid rgba(0, 255, 255, 0.3);
-            color: #00ffff;
-            font-size: 24px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            z-index: 15;
+            font-weight: bold;
         }
 
-        .open-text-btn:hover {
-            transform: scale(1.15) rotate(360deg);
-            border-color: #00ffff;
-            box-shadow: 0 0 30px #00ffff;
-        }
-
-        /* ===== STATUS BAR ===== */
-        .status-bar {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
+        /* Typing Indicator */
+        .typing-indicator {
             display: flex;
-            justify-content: space-between;
-            color: #666;
-            font-size: 12px;
-            letter-spacing: 1px;
+            gap: 4px;
+            padding: 10px 14px;
         }
 
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #00ffff;
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
             border-radius: 50%;
-            animation: pulse 2s infinite;
+            animation: bounce 1.4s infinite;
         }
 
-        /* ===== ANIMATIONS ===== */
-        @keyframes cinematicFade {
-            0% { opacity: 1; backdrop-filter: blur(0); }
-            70% { opacity: 1; backdrop-filter: blur(0); }
-            100% { opacity: 0; backdrop-filter: blur(10px); display: none; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Animations */
+        @keyframes gentlePulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 157, 0.2); }
+            50% { box-shadow: 0 0 35px rgba(0, 255, 157, 0.4); }
         }
 
-        @keyframes cinematicText {
-            0% { opacity: 0; transform: scale(0.9); }
-            30% { opacity: 1; transform: scale(1); }
-            70% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(1.2); }
-        }
-
-        @keyframes containerAppear {
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes duplexPulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(0, 255, 157, 0.4); }
+            50% { box-shadow: 0 0 50px rgba(0, 255, 157, 0.6); }
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.7; }
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 40px #00ffff; }
-            50% { box-shadow: 0 0 70px #00ffff; }
+        @keyframes expandRing {
+            0% { transform: scale(0.9); opacity: 0.5; }
+            100% { transform: scale(1.3); opacity: 0; }
         }
 
-        @keyframes pulseRing {
-            0% { transform: scale(1); opacity: 0.5; }
-            100% { transform: scale(1.5); opacity: 0; }
+        @keyframes levelMeter {
+            0% { height: 10px; opacity: 0.3; }
+            100% { height: 30px; opacity: 1; }
         }
 
-        @keyframes wave {
+        @keyframes bounce {
             0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-15px); }
+            30% { transform: translateY(-6px); }
         }
 
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes scan {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 100%; }
+        /* Scrollbar */
+        .chat-history::-webkit-scrollbar {
+            width: 4px;
         }
 
-        /* ===== FUTURISTIC ELEMENTS ===== */
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
-            pointer-events: none;
-            z-index: 5;
-            opacity: 0.3;
+        .chat-history::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
         }
 
-        .corner-decoration {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            border: 2px solid rgba(0, 255, 255, 0.2);
-            z-index: 1;
+        .chat-history::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 2px;
         }
 
-        .corner-tl {
-            top: 20px;
-            left: 20px;
-            border-right: none;
-            border-bottom: none;
-        }
-
-        .corner-br {
-            bottom: 20px;
-            right: 20px;
-            border-left: none;
-            border-top: none;
+        /* Hidden Voice Mode Welcome */
+        .voice-mode-welcome {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <!-- Cinematic Opening -->
-    <div class="cinematic-overlay">
-        <div class="cinematic-content">
-            <div class="cinematic-logo">PINGU</div>
-            <div class="cinematic-sub">beyond consciousness</div>
-        </div>
-    </div>
+    <div class="background"></div>
 
-    <!-- Futuristic Grid -->
-    <div class="grid-overlay"></div>
-    
-    <!-- Scan Line Effect -->
-    <div class="scan-line"></div>
-
-    <!-- Main Container -->
     <div class="container">
-        <!-- Corner Decorations -->
-        <div class="corner-decoration corner-tl"></div>
-        <div class="corner-decoration corner-br"></div>
-
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="status-item">
-                <span class="status-dot"></span>
-                <span>ONLINE</span>
+        <!-- Pingu Profile -->
+        <div class="pingu-profile">
+            <div class="avatar-container">
+                <div class="avatar-circle">
+                    <span class="emoji">🐧</span>
+                    <div class="speaking-indicator" id="speakingIndicator"></div>
+                </div>
             </div>
-            <div class="status-item">
-                <span>✦ v1.0</span>
-            </div>
-            <div class="status-item">
-                <span>⚡ 100%</span>
-            </div>
+            <h2>PINGU</h2>
+            <p class="tagline">voice interface</p>
         </div>
 
-        <!-- Pingu Avatar - EXACT MATCH TO IMAGE -->
-        <div class="pingu-container">
-            <div class="pingu-avatar" id="pinguAvatar">
-                <div class="glow-ring"></div>
-                <svg viewBox="0 0 100 100">
-                    <!-- Pingu Face - Exactly like image -->
-                    <circle cx="50" cy="50" r="45" fill="#1a1a1a" stroke="#00ffff" stroke-width="1.5"/>
-                    <!-- Eyes -->
-                    <circle cx="35" cy="40" r="6" fill="white"/>
-                    <circle cx="65" cy="40" r="6" fill="white"/>
-                    <circle cx="37" cy="42" r="2.5" fill="black"/>
-                    <circle cx="63" cy="42" r="2.5" fill="black"/>
-                    <!-- Cute blush -->
-                    <circle cx="30" cy="55" r="4" fill="#ff6b9d" opacity="0.3"/>
-                    <circle cx="70" cy="55" r="4" fill="#ff6b9d" opacity="0.3"/>
-                    <!-- Mouth (slight smile) -->
-                    <path d="M35 65 Q50 75 65 65" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                </svg>
-                <div class="speaking-indicator" id="speakingIndicator"></div>
+        <!-- Voice Interface (Default) -->
+        <div class="voice-interface" id="voiceInterface">
+            <!-- Modern Recording Button -->
+            <div class="mic-container" id="micContainer">
+                <button class="mic-button" id="micBtn">
+                    <span>🎤</span>
+                    <div class="recording-level"></div>
+                </button>
             </div>
-            
-            <!-- Chat Bubble - EXACT MATCH -->
-            <div class="chat-bubble" id="chatBubble">
-                <span id="botMessage"></span>
-                <span class="cursor"></span>
+
+            <!-- Level Bars (Recording Meter) -->
+            <div class="level-bars" id="levelBars">
+                <div class="level-bar"></div>
+                <div class="level-bar"></div>
+                <div class="level-bar"></div>
+                <div class="level-bar"></div>
+                <div class="level-bar"></div>
             </div>
+
+            <!-- Full Duplex Indicator -->
+            <div class="duplex-indicator" id="duplexIndicator">
+                <div class="duplex-dot"></div>
+                <span>FULL DUPLEX</span>
+                <div class="duplex-dot"></div>
+            </div>
+
+            <!-- Status Text -->
+            <p class="status-text" id="statusText">tap to speak · long press for duplex</p>
         </div>
 
-        <!-- Voice Section - EXACT MATCH TO IMAGE -->
-        <div class="voice-section">
-            <button class="mic-button" id="micButton">
-                <svg viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-                    <path fill="currentColor" d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-                </svg>
-            </button>
-            
-            <!-- Listening Animation - EXACT MATCH -->
-            <div class="listening-animation" id="listeningAnimation">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            
-            <p class="voice-hint" id="voiceHint">Listening...</p>
-        </div>
+        <!-- Chat History (Hidden by default) -->
+        <div class="chat-history" id="chatHistory"></div>
 
-        <!-- Text Input Interface -->
-        <div class="text-input-interface" id="textInterface">
-            <div class="text-input-container">
-                <input type="text" id="textInput" placeholder="type your message..." autocomplete="off">
-                <button id="sendButton">send</button>
-            </div>
-            <button class="close-text" id="closeText">✕</button>
-        </div>
+        <!-- Keyboard Toggle - Always Floating -->
+        <button class="keyboard-toggle" id="keyboardToggle">⌨️</button>
 
-        <!-- Text Input Opener -->
-        <button class="open-text-btn" id="openTextBtn">⌨️</button>
+        <!-- Text Input Area -->
+        <div class="text-input-area" id="textArea">
+            <input type="text" id="textInput" placeholder="Type your message...">
+            <button id="sendBtn">➤</button>
+        </div>
     </div>
 
     <script>
-        // PINGU - COMPLETE VOICE + TEXT BOT
-        class Pingu {
+        class PinguAI {
             constructor() {
-                this.isListening = false;
-                this.isSpeaking = false;
-                this.textMode = false;
+                this.memory = {
+                    bot_profile: {
+                        name: "Pingu",
+                        greeting: "Hello, my name is Pingu at your service",
+                        welcome_message: "I remember everything about Bonz and Ella. Ask me about how they met, their inside jokes, university life, or any special moment. I'm listening."
+                    },
+                    couple: {
+                        names: { him: "Bonz", her: "Ella" },
+                        university: "Makerere University"
+                    },
+                    first_meeting: {
+                        date: "23 August 2025",
+                        location: "under the jacaranda tree by Makerere's main library",
+                        story: "Bonz first saw Ella on 23 August 2025 under the jacaranda tree by Makerere's main library. She was balancing a stack of notebooks and a chapati wrapped in paper; he was late for Politics 101 and nearly knocked them both over. They spent the next hour talking about Kampala traffic and high-school debating clubs instead of going to class.",
+                        details: {
+                            what_she_was_holding: "a stack of notebooks and a chapati wrapped in paper",
+                            what_he_was_late_for: "Politics 101",
+                            what_they_talked_about: ["Kampala traffic", "high-school debating clubs"],
+                            tree_type: "jacaranda"
+                        }
+                    },
+                    rainy_evening_confession: {
+                        location: "old Faculty of Arts corridor",
+                        what_bonz_said: "I think I'm yours",
+                        how_ella_responded: "laughed, then said it back",
+                        story: "One rainy evening they took shelter in the old Faculty of Arts corridor. Bonz said, sincerely and badly, 'I think I'm yours.' Ella laughed, then said it back. They didn't need fireworks—just the walk back through campus, umbrellas knocking, both pretending they weren't smiling too much."
+                    },
+                    personality_traits: {
+                        bonz: {
+                            details: { remembers: ["her tea no sugar", "she taps pen when nervous"] }
+                        }
+                    },
+                    specific_facts: [
+                        { fact: "Bonz first saw Ella on 23 August 2025", keywords: ["first saw", "date", "when"] },
+                        { fact: "Ella was holding notebooks and a chapati wrapped in paper", keywords: ["holding", "carrying", "chapati"] },
+                        { fact: "Bonz was late for Politics 101", keywords: ["late", "class", "politics 101"] },
+                        { fact: "They talked about Kampala traffic and high-school debating clubs", keywords: ["talked about", "conversation"] },
+                        { fact: "Bonz explained hip-hop lyrics to Ella", keywords: ["explained", "hip-hop", "lyrics"] },
+                        { fact: "Ella corrected Bonz's Luganda pronunciation", keywords: ["corrected", "luganda"] },
+                        { fact: "Ella argues with lecturers and makes the whole row laugh", keywords: ["argue", "lecturer", "laugh"] },
+                        { fact: "Bonz remembers Ella's tea has no sugar", keywords: ["tea", "sugar", "remembers"] },
+                        { fact: "Ella taps her pen when nervous", keywords: ["tap", "pen", "nervous"] },
+                        { fact: "They sheltered from rain in the old Faculty of Arts corridor", keywords: ["shelter", "rain", "faculty of arts"] },
+                        { fact: "Bonz said 'I think I'm yours'", keywords: ["said", "i think i'm yours", "confession"] },
+                        { fact: "They didn't need fireworks", keywords: ["fireworks"] },
+                        { fact: "The tree near the library was a jacaranda tree", keywords: ["tree", "jacaranda", "library"] }
+                    ],
+                    fallback_responses: [
+                        "I don't have that memory yet. Want to tell me about it?",
+                        "That's not in my memory... but I'd love to learn!",
+                        "I don't know that one. Tell me more?"
+                    ]
+                };
+
                 this.recognition = null;
                 this.synthesis = window.speechSynthesis;
-                this.memory = this.loadMemory();
+                this.isListening = false;
+                this.isSpeaking = false;
+                this.isFullDuplex = false;
+                this.longPressTimer = null;
+                this.textMode = false;
                 
                 this.init();
             }
@@ -658,175 +653,277 @@
             init() {
                 this.setupVoiceRecognition();
                 this.setupEventListeners();
-                this.cinematicIntroduction();
-            }
-
-            loadMemory() {
-                // Pingu's memory - Your relationship data
-                return {
-                    name: "Pingu",
-                    greetings: [
-                        "Hello my name is Pingu at your service",
-                        "Hey there, Pingu here, ready to assist",
-                        "Pingu online. How can I help?"
-                    ],
-                    responses: {
-                        meet: "You first met on May 15th, 2023 at Central Park Coffee Shop. It was raining and he spilled his coffee - but that's when your story began.",
-                        first_date: "Your first date was at that cozy Italian place on June 1st. You talked for 4 hours until they closed!",
-                        favorite_food: "Her favorite food is sushi and ramen. His? Burgers and pizza - classic!",
-                        favorite_movie: "Her favorite movie is Amélie. His is Inception.",
-                        love: "I know for a fact that you two are deeply in love. Every message, every memory proves it.",
-                        inside_joke: "The pineapple incident? Oh yes, I remember! That was hilarious - the fake allergy reveal!",
-                        default: [
-                            "Tell me more about that...",
-                            "I'm here, what's on your mind?",
-                            "Ask me about your memories together",
-                            "I remember everything about you two"
-                        ]
-                    },
-                    whatsapp_memories: [
-                        { date: "2024-01-15", from: "him", message: "I love you more than coffee", context: "late night" },
-                        { date: "2024-01-16", from: "her", message: "Dreamt about our future together", context: "morning sweet" }
-                    ]
-                };
-            }
-
-            cinematicIntroduction() {
-                // Sequence: Welcome message with typing effect
-                setTimeout(() => {
-                    this.typeMessage(this.memory.greetings[0], () => {
-                        // Speak the greeting
-                        this.speak(this.memory.greetings[0], () => {
-                            // After speaking, show how-to message
-                            setTimeout(() => {
-                                const howTo = "You can ask me about your memories, or just tap the mic and speak. I'm listening...";
-                                this.typeMessage(howTo, () => {
-                                    this.speak(howTo);
-                                });
-                            }, 800);
-                        });
-                    });
-                }, 3200); // After cinematic
-            }
-
-            typeMessage(text, callback) {
-                const messageEl = document.getElementById('botMessage');
-                let i = 0;
-                messageEl.textContent = '';
                 
-                const typing = setInterval(() => {
-                    if (i < text.length) {
-                        messageEl.textContent += text.charAt(i);
-                        i++;
-                    } else {
-                        clearInterval(typing);
-                        if (callback) callback();
-                    }
-                }, 30);
+                // Voice-only welcome
+                setTimeout(() => {
+                    this.speak(this.memory.bot_profile.greeting, () => {
+                        setTimeout(() => {
+                            this.speak(this.memory.bot_profile.welcome_message);
+                        }, 1200);
+                    });
+                }, 500);
             }
 
             setupVoiceRecognition() {
                 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                     this.recognition = new SpeechRecognition();
-                    this.recognition.continuous = false;
-                    this.recognition.interimResults = false;
+                    this.recognition.continuous = true;
+                    this.recognition.interimResults = true;
                     this.recognition.lang = 'en-US';
                     
                     this.recognition.onstart = () => {
                         this.isListening = true;
-                        document.getElementById('micButton').classList.add('listening');
-                        document.getElementById('listeningAnimation').classList.add('active');
-                        document.getElementById('voiceHint').textContent = 'I\'m listening...';
+                        this.updateMicState();
                     };
                     
                     this.recognition.onresult = (event) => {
-                        const command = event.results[0][0].transcript;
-                        this.processCommand(command);
+                        const last = event.results.length - 1;
+                        const command = event.results[last][0].transcript;
+                        
+                        if (event.results[last].isFinal) {
+                            this.processQuestion(command, 'voice');
+                            
+                            // In duplex mode, keep listening
+                            if (!this.isFullDuplex) {
+                                this.stopListening();
+                            }
+                        } else {
+                            document.getElementById('statusText').textContent = `"${command}"`;
+                        }
                     };
                     
                     this.recognition.onend = () => {
-                        this.isListening = false;
-                        document.getElementById('micButton').classList.remove('listening');
-                        document.getElementById('listeningAnimation').classList.remove('active');
-                        document.getElementById('voiceHint').textContent = 'Listening...';
+                        if (this.isFullDuplex) {
+                            this.recognition.start();
+                        } else {
+                            this.resetVoiceState();
+                        }
                     };
                 } else {
-                    document.getElementById('voiceHint').textContent = 'Voice not supported';
+                    document.getElementById('statusText').textContent = 'voice not supported';
                 }
             }
 
             setupEventListeners() {
-                // Mic button
-                document.getElementById('micButton').addEventListener('click', () => {
-                    if (this.recognition && !this.isListening) {
-                        this.recognition.start();
+                const micBtn = document.getElementById('micBtn');
+                const micContainer = document.getElementById('micContainer');
+
+                // Single tap - toggle listening / exit duplex
+                micBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    if (this.isFullDuplex) {
+                        // Single tap exits duplex mode
+                        this.isFullDuplex = false;
+                        this.stopListening();
+                        this.speak("Exiting full duplex mode");
+                    } else if (this.isListening) {
+                        this.stopListening();
+                    } else {
+                        this.startListening();
                     }
                 });
-                
-                // Open text interface
-                document.getElementById('openTextBtn').addEventListener('click', () => {
-                    this.toggleTextInterface();
+
+                // Long press for full duplex
+                micContainer.addEventListener('mousedown', () => {
+                    this.longPressTimer = setTimeout(() => {
+                        if (!this.isFullDuplex) {
+                            this.startFullDuplex();
+                        }
+                    }, 500);
                 });
-                
-                // Close text interface
-                document.getElementById('closeText').addEventListener('click', () => {
-                    this.toggleTextInterface(false);
+
+                micContainer.addEventListener('mouseup', () => clearTimeout(this.longPressTimer));
+                micContainer.addEventListener('mouseleave', () => clearTimeout(this.longPressTimer));
+
+                // Touch events
+                micContainer.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    this.longPressTimer = setTimeout(() => {
+                        if (!this.isFullDuplex) {
+                            this.startFullDuplex();
+                        }
+                    }, 500);
                 });
-                
-                // Send text message
-                document.getElementById('sendButton').addEventListener('click', () => {
+
+                micContainer.addEventListener('touchend', () => clearTimeout(this.longPressTimer));
+
+                // Keyboard toggle - always floating, opens/closes chat
+                document.getElementById('keyboardToggle').addEventListener('click', () => {
+                    this.toggleTextMode();
+                });
+
+                // Send text
+                document.getElementById('sendBtn').addEventListener('click', () => {
                     this.sendTextMessage();
                 });
-                
-                // Enter key
+
                 document.getElementById('textInput').addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') this.sendTextMessage();
                 });
             }
 
-            processCommand(command) {
-                // Show what she said
-                this.typeMessage(`"${command}"`, () => {
-                    setTimeout(() => {
-                        const response = this.generateResponse(command);
-                        this.typeMessage(response, () => {
-                            this.speak(response);
-                        });
-                    }, 500);
-                });
+            startListening() {
+                if (this.recognition && !this.isListening) {
+                    this.recognition.continuous = false;
+                    this.recognition.start();
+                }
             }
 
-            generateResponse(question) {
-                const q = question.toLowerCase();
+            startFullDuplex() {
+                this.isFullDuplex = true;
+                document.getElementById('statusText').textContent = 'full duplex mode';
                 
-                // Check for different topics
-                if (q.includes('meet') || q.includes('first met')) {
-                    return this.memory.responses.meet;
-                }
-                if (q.includes('first date')) {
-                    return this.memory.responses.first_date;
-                }
-                if (q.includes('favorite food')) {
-                    return this.memory.responses.favorite_food;
-                }
-                if (q.includes('favorite movie')) {
-                    return this.memory.responses.favorite_movie;
-                }
-                if (q.includes('love')) {
-                    return this.memory.responses.love;
-                }
-                if (q.includes('joke') || q.includes('pineapple')) {
-                    return this.memory.responses.inside_joke;
-                }
-                if (q.includes('open text') || q.includes('type mode')) {
-                    this.toggleTextInterface(true);
-                    return "Opening text interface for you";
+                if (this.recognition) {
+                    this.recognition.continuous = true;
+                    this.recognition.start();
                 }
                 
-                // Default response
-                const defaults = this.memory.responses.default;
-                return defaults[Math.floor(Math.random() * defaults.length)];
+                this.updateMicState();
+                this.speak("Full duplex mode activated. I'll keep listening.");
+            }
+
+            stopListening() {
+                if (this.recognition && this.isListening) {
+                    this.recognition.stop();
+                }
+                this.resetVoiceState();
+            }
+
+            resetVoiceState() {
+                this.isListening = false;
+                this.isFullDuplex = false;
+                this.updateMicState();
+                document.getElementById('statusText').textContent = 'tap to speak · long press for duplex';
+            }
+
+            updateMicState() {
+                const micBtn = document.getElementById('micBtn');
+                const duplexIndicator = document.getElementById('duplexIndicator');
+                
+                micBtn.classList.remove('listening', 'full-duplex');
+                
+                if (this.isFullDuplex) {
+                    micBtn.classList.add('full-duplex');
+                    duplexIndicator.classList.add('active');
+                } else if (this.isListening) {
+                    micBtn.classList.add('listening');
+                    duplexIndicator.classList.remove('active');
+                } else {
+                    duplexIndicator.classList.remove('active');
+                }
+            }
+
+            toggleTextMode() {
+                this.textMode = !this.textMode;
+                const textArea = document.getElementById('textArea');
+                const chatHistory = document.getElementById('chatHistory');
+                const voiceInterface = document.getElementById('voiceInterface');
+                const keyboardToggle = document.getElementById('keyboardToggle');
+                
+                keyboardToggle.classList.toggle('active');
+                
+                if (this.textMode) {
+                    // Open chat
+                    textArea.classList.add('active');
+                    chatHistory.classList.add('visible');
+                    voiceInterface.style.display = 'none';
+                    document.getElementById('textInput').focus();
+                } else {
+                    // Close chat, return to voice mode
+                    textArea.classList.remove('active');
+                    chatHistory.classList.remove('visible');
+                    voiceInterface.style.display = 'flex';
+                }
+            }
+
+            processQuestion(question, source) {
+                if (this.textMode) {
+                    this.addMessage('user', question);
+                }
+                
+                const response = this.findResponse(question);
+                
+                if (this.textMode) {
+                    setTimeout(() => {
+                        this.addMessage('bot', response);
+                    }, 500);
+                }
+                
+                this.speak(response);
+            }
+
+            findResponse(question) {
+                const q = question.toLowerCase().trim();
+                
+                // Search facts
+                for (let fact of this.memory.specific_facts) {
+                    for (let keyword of fact.keywords) {
+                        if (q.includes(keyword.toLowerCase())) {
+                            return fact.fact;
+                        }
+                    }
+                }
+                
+                // First meeting
+                if (q.includes('first') || q.includes('meet') || q.includes('saw')) {
+                    if (q.includes('where')) return this.memory.first_meeting.location;
+                    if (q.includes('when') || q.includes('date')) return this.memory.first_meeting.date;
+                    if (q.includes('hold') || q.includes('carry')) return this.memory.first_meeting.details.what_she_was_holding;
+                    return this.memory.first_meeting.story;
+                }
+                
+                // Rainy confession
+                if (q.includes('rain') || q.includes('shelter') || q.includes('confess')) {
+                    if (q.includes('where')) return this.memory.rainy_evening_confession.location;
+                    if (q.includes('say')) return this.memory.rainy_evening_confession.what_bonz_said;
+                    return this.memory.rainy_evening_confession.story;
+                }
+                
+                // Tea and pen
+                if (q.includes('tea') || q.includes('sugar')) {
+                    return "Bonz remembers that Ella's tea has no sugar";
+                }
+                if (q.includes('tap') || q.includes('pen') || q.includes('nervous')) {
+                    return "Ella taps her pen when she's nervous";
+                }
+                
+                // University
+                if (q.includes('university')) {
+                    return `They attend ${this.memory.couple.university}`;
+                }
+                
+                // Tree
+                if (q.includes('tree')) {
+                    return "The tree near the library was a jacaranda tree";
+                }
+                
+                // Random fallback
+                return this.memory.fallback_responses[
+                    Math.floor(Math.random() * this.memory.fallback_responses.length)
+                ];
+            }
+
+            addMessage(sender, text) {
+                const chatHistory = document.getElementById('chatHistory');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+                
+                if (sender === 'bot') {
+                    messageDiv.innerHTML = `
+                        <div class="message-avatar">🐧</div>
+                        <div class="message-content">${text}</div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="message-content">${text}</div>
+                        <div class="message-avatar">👤</div>
+                    `;
+                }
+                
+                chatHistory.appendChild(messageDiv);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
             }
 
             speak(text, callback) {
@@ -835,9 +932,8 @@
                 this.synthesis.cancel();
                 
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 1.0;
+                utterance.rate = 0.95;
                 utterance.pitch = 1.0;
-                utterance.voice = this.synthesis.getVoices().find(v => v.lang.includes('en'));
                 
                 document.getElementById('speakingIndicator').classList.add('active');
                 this.isSpeaking = true;
@@ -851,48 +947,20 @@
                 this.synthesis.speak(utterance);
             }
 
-            toggleTextInterface(force) {
-                const textInterface = document.getElementById('textInterface');
-                if (force === true) {
-                    textInterface.classList.add('active');
-                    this.textMode = true;
-                    document.getElementById('textInput').focus();
-                } else if (force === false) {
-                    textInterface.classList.remove('active');
-                    this.textMode = false;
-                } else {
-                    textInterface.classList.toggle('active');
-                    this.textMode = !this.textMode;
-                    if (this.textMode) {
-                        document.getElementById('textInput').focus();
-                    }
-                }
-            }
-
             sendTextMessage() {
                 const input = document.getElementById('textInput');
                 const message = input.value.trim();
                 
                 if (message) {
-                    // Show her message
-                    this.typeMessage(`"${message}"`, () => {
-                        setTimeout(() => {
-                            const response = this.generateResponse(message);
-                            this.typeMessage(response, () => {
-                                this.speak(response);
-                            });
-                        }, 500);
-                    });
-                    
+                    this.processQuestion(message, 'text');
                     input.value = '';
-                    this.toggleTextInterface(false);
                 }
             }
         }
 
-        // Initialize Pingu when page loads
+        // Initialize Pingu
         document.addEventListener('DOMContentLoaded', () => {
-            window.pingu = new Pingu();
+            window.pingu = new PinguAI();
         });
     </script>
 </body>
