@@ -1,16 +1,147 @@
 {
-  "name": "Pingu - Your Companion",
+  "name": "Pingu - Bonz & Ella's Memory",
   "short_name": "Pingu",
-  "description": "Your personal memory companion",
+  "description": "Your personal companion who remembers every moment of Bonz and Ella's love story - from the jacaranda tree to rainy confessions.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a1a1a",
   "theme_color": "#1a1a1a",
+  "orientation": "portrait",
+  "scope": "/",
+  "categories": ["lifestyle", "personal", "romance"],
+  
   "icons": [
     {
-      "src": "assets/icons/icon-192.png",
+      "src": "assets/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-192x192.png",
       "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  
+  "splash_screens": [
+    {
+      "src": "assets/splash/splash-640x1136.png",
+      "sizes": "640x1136",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/splash/splash-750x1334.png",
+      "sizes": "750x1334",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/splash/splash-1125x2436.png",
+      "sizes": "1125x2436",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/splash/splash-1242x2688.png",
+      "sizes": "1242x2688",
       "type": "image/png"
     }
-  ]
+  ],
+  
+  "shortcuts": [
+    {
+      "name": "Ask Pingu",
+      "short_name": "Ask",
+      "description": "Ask about Bonz & Ella's story",
+      "url": "/?ask",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-ask.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Their Story",
+      "short_name": "Story",
+      "description": "Read how Bonz first saw Ella",
+      "url": "/?story",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-story.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Rainy Confession",
+      "short_name": "Confession",
+      "description": "That evening in the Faculty of Arts",
+      "url": "/?confession",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-confession.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  
+  "related_applications": [],
+  "prefer_related_applications": false,
+  
+  "permissions": {
+    "microphone": {
+      "description": "To hear your questions and voice commands",
+      "required": false
+    }
+  },
+  
+  "features": [
+    "Voice Recognition",
+    "Text-to-Speech",
+    "Offline Mode",
+    "Memory Storage"
+  ],
+  
+  "lang": "en",
+  "dir": "ltr",
+  
+  "iarc_rating_id": "f8f6b9e2-8b4a-4b3a-9b1a-3f8f6b9e28b4"
 }
