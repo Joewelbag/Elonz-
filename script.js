@@ -1,4 +1,4 @@
-// Pingu AI Core - Version 2.1 (FIXED)
+// Pingu AI Core - Version 3.1 bonz
 class PinguAI {
     constructor() {
         // Core properties
