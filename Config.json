@@ -1,0 +1,122 @@
+{
+  "bot": {
+    "name": "Pingu",
+    "version": "2.1.0",
+    "environment": "production",
+    "debug_mode": false
+  },
+  "voice": {
+    "input": {
+      "language": "en-US",
+      "continuous_mode": true,
+      "interim_results": true,
+      "max_alternatives": 1,
+      "silence_timeout_ms": 2000
+    },
+    "output": {
+      "rate": 0.95,
+      "pitch": 1.0,
+      "volume": 1.0,
+      "voice_preference": "natural",
+      "auto_speak": true,
+      "queue_speeches": true
+    },
+    "full_duplex": {
+      "enabled": true,
+      "long_press_ms": 500,
+      "continuous_listening": true,
+      "auto_restart": true
+    }
+  },
+  "interface": {
+    "theme": {
+      "primary": "#0f0f0f",
+      "secondary": "#1a1a1a",
+      "accent": "#00ff9d",
+      "text": "#ffffff",
+      "text_secondary": "#a0a0a0",
+      "border": "#2a2a2a"
+    },
+    "animations": {
+      "pulse_speed": 1.5,
+      "wave_speed": 0.8,
+      "transition_speed": 0.3
+    },
+    "mic": {
+      "idle_border": "#00ff9d",
+      "listening_pulse": true,
+      "duplex_symbol": "∞",
+      "show_level_meter": true
+    },
+    "keyboard": {
+      "floating": true,
+      "toggle_on_first_tap": true,
+      "close_on_second_tap": true
+    }
+  },
+  "memory": {
+    "file": "memory.json",
+    "auto_reload": true,
+    "cache_duration_ms": 300000,
+    "max_history": 100
+  },
+  "ai": {
+    "matching": {
+      "fuzzy_threshold": 0.75,
+      "enable_fuzzy": true,
+      "semantic_search": true,
+      "keyword_weight": 0.8,
+      "context_weight": 0.2
+    },
+    "responses": {
+      "typing_delay_min_ms": 400,
+      "typing_delay_max_ms": 1200,
+      "think_time_ms": 800
+    },
+    "context": {
+      "enabled": true,
+      "max_history": 5,
+      "follow_up_detection": true,
+      "context_window_ms": 300000
+    }
+  },
+  "learning": {
+    "mode_enabled": true,
+    "trigger_phrases": [
+      "remember that",
+      "learn this",
+      "Pingu remember",
+      "save this",
+      "add this to your memory",
+      "remember this",
+      "learn this fact"
+    ],
+    "confirmation_needed": true,
+    "max_memories": 100,
+    "storage_key": "pingu_taught_memories"
+  },
+  "synonyms": {
+    "meet": ["met", "meeting", "first saw", "encounter", "ran into", "see"],
+    "date": ["when", "day", "time", "month", "year", "on what day"],
+    "location": ["where", "place", "spot", "area", "around", "at which"],
+    "love": ["like", "adore", "care about", "feelings", "heart"],
+    "story": ["tale", "narrative", "what happened", "tell me about", "describe"],
+    "rain": ["rainy", "raining", "wet", "storm", "weather", "umbrella"],
+    "confess": ["confession", "said", "told", "admitted", "opened up", "revealed"],
+    "food": ["eat", "ate", "meal", "snack", "chapati", "rolex", "breakfast"],
+    "university": ["school", "campus", "makerere", "uni", "college", "education"],
+    "first": ["start", "beginning", "initially", "originally", "first time"],
+    "tree": ["jacaranda", "under the tree", "shade", "purple tree"],
+    "library": ["books", "study", "main library", "reading"],
+    "tea": ["beverage", "drink", "cup of tea", "chai", "sugar"],
+    "nervous": ["anxious", "stressed", "worried", "fidget", "tap"],
+    "remember": ["recall", "recollect", "memorize", "keep in mind", "note"]
+  },
+  "performance": {
+    "offline_mode": true,
+    "cache_ttl": 86400,
+    "max_message_length": 500,
+    "rate_limit_ms": 100,
+    "save_conversation_frequency": 5
+  }
+}
